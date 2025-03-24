@@ -51,9 +51,12 @@
 // }
 
 
+
+
 "use client";
-import { useScroll, useTransform, motion } from "framer-motion";
-import { useRef, useMemo } from "react";
+import { useScroll } from "framer-motion";
+import { useRef } from "react";
+import AnimatedChar from "./AnimatedChar"; // Import child component
 
 export default function Paragraph() {
   const container = useRef(null);
@@ -65,34 +68,11 @@ export default function Paragraph() {
   const paragraph = [
     "With great power",
     "comes great responsibility.",
-    "I can never forget that."
+    "I can never forget that.",
   ];
 
-  // 🔹 Compute transforms in a structured way using useMemo
-  const transformData = useMemo(() => {
-    return paragraph.map((line, lineIndex) =>
-      line.split(" ").map((word, wordIndex) =>
-        word.split("").map((char, charIndex) => {
-          const charStart =
-            (lineIndex +
-              wordIndex / line.length +
-              charIndex / (line.length * word.length)) /
-            paragraph.length;
-          const charEnd = charStart + 0.15;
-
-          return {
-            char,
-            opacity: useTransform(scrollYProgress, [charStart, charEnd], [0, 1]),
-            color: useTransform(
-              scrollYProgress,
-              [charStart, charEnd],
-              ["rgba(255,255,255,0.2)", "rgb(185,28,28)"]
-            ),
-          };
-        })
-      )
-    );
-  }, [scrollYProgress, paragraph]);
+  // ✅ Count total characters in the paragraph for better animation timing
+  const totalChars = paragraph.join(" ").length;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-red-600/50 via-blue-600/50 to-blue-600/50">
@@ -104,22 +84,21 @@ export default function Paragraph() {
           <div key={lineIndex} className="flex flex-wrap justify-center">
             {line.split(" ").map((word, wordIndex) => (
               <span key={wordIndex} className="relative mr-3">
-                {word.split("").map((char, charIndex) => {
-                  // 🔹 Access the precomputed transform values correctly
-                  const { opacity, color } = transformData[lineIndex][wordIndex][charIndex];
-
-                  return (
-                    <span key={charIndex} className="relative">
-                      <motion.span
-                        style={{ opacity, color }}
-                        transition={{ ease: "easeInOut", duration: 0.7 }}
-                        className="text-white"
-                      >
-                        {char}
-                      </motion.span>
-                    </span>
-                  );
-                })}
+                {word.split("").map((char, charIndex) => (
+                  <AnimatedChar
+                    key={`${lineIndex}-${wordIndex}-${charIndex}`}
+                    char={char}
+                    charIndex={
+                      paragraph
+                        .slice(0, lineIndex)
+                        .join(" ").length + // Count previous lines
+                      paragraph[lineIndex].slice(0, wordIndex).length + // Count previous words
+                      charIndex
+                    }
+                    totalChars={totalChars}
+                    scrollYProgress={scrollYProgress} // Pass progress
+                  />
+                ))}
               </span>
             ))}
           </div>
@@ -128,4 +107,3 @@ export default function Paragraph() {
     </div>
   );
 }
-
