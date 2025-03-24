@@ -9,7 +9,7 @@ const quote = {
     opacity: 1,
     transition: {
       delay: 0.5,
-      staggerChildren: 0.08, // Fixed typo here
+      staggerChildren: 0.08, 
     },
   },
 };
@@ -37,13 +37,13 @@ const AnimatedText = ({ text, className = "" }) => {
         initial="initial"
         animate="animate"
       >
-        {text.split(" ").map((word, index) => ( // Split by spaces for words
+        {text.split(" ").map((word, index) => ( 
           <motion.span
             key={word + '-' + index}
-            variants={singleWord} // Fixed typo here
-            style={{ display: 'inline-block' }} // Ensure each word is inline-block
+            variants={singleWord} 
+            style={{ display: 'inline-block' }} 
           >
-            {word}&nbsp; {/* Add a space after each word */}
+            {word}&nbsp; 
           </motion.span>
         ))}
       </motion.h1>
