@@ -37,7 +37,7 @@ export default function Home() {
           {/* Image container with adjusted positioning and added margin */}
           <div className="p-2 flex justify-end items-center w-1/2 mr-12">
             <Image 
-              src="/SpiderMandy.jpg" 
+              src="./SpiderMandy.jpg" 
               alt="SpiderMandy"
               width={500} 
               height={500} 

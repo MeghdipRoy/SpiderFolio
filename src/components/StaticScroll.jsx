@@ -347,7 +347,7 @@ export default function StaticScroll() {
         <div className="hidden lg:block w-2/3 sticky top-0 h-screen z-30">
           <div className="h-full w-full relative">
             <Image
-              src="/spiderman_web.webp" // Image from the public folder
+              src="./spiderman_web.webp" // Image from the public folder
               alt="Spider-Man Web"
               fill
               className="object-cover opacity-70" // Added opacity to blend the image
