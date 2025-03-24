@@ -68,26 +68,27 @@ export default function Paragraph() {
     "I can never forget that."
   ];
 
-  // 🔹 Precompute character animations
-  const characterTransforms = useMemo(() => {
-    let charIndex = 0;
+  // 🔹 Compute transforms in a structured way using useMemo
+  const transformData = useMemo(() => {
     return paragraph.map((line, lineIndex) =>
       line.split(" ").map((word, wordIndex) =>
-        word.split("").map((char, charPos) => {
-          const start = charIndex / 100; // Normalize animation start
-          const end = start + 0.15; // Duration for animation
+        word.split("").map((char, charIndex) => {
+          const charStart =
+            (lineIndex +
+              wordIndex / line.length +
+              charIndex / (line.length * word.length)) /
+            paragraph.length;
+          const charEnd = charStart + 0.15;
 
-          const transform = {
-            opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
+          return {
+            char,
+            opacity: useTransform(scrollYProgress, [charStart, charEnd], [0, 1]),
             color: useTransform(
               scrollYProgress,
-              [start, end],
+              [charStart, charEnd],
               ["rgba(255,255,255,0.2)", "rgb(185,28,28)"]
-            )
+            ),
           };
-
-          charIndex++; // Increment for the next character
-          return transform;
         })
       )
     );
@@ -103,20 +104,20 @@ export default function Paragraph() {
           <div key={lineIndex} className="flex flex-wrap justify-center">
             {line.split(" ").map((word, wordIndex) => (
               <span key={wordIndex} className="relative mr-3">
-                {word.split("").map((char, charPos) => {
-                  const charData = characterTransforms[lineIndex]?.[wordIndex]?.[charPos];
-
-                  if (!charData) return null; // Prevent errors
+                {word.split("").map((char, charIndex) => {
+                  // 🔹 Access the precomputed transform values correctly
+                  const { opacity, color } = transformData[lineIndex][wordIndex][charIndex];
 
                   return (
-                    <motion.span
-                      key={charPos}
-                      style={{ opacity: charData.opacity, color: charData.color }}
-                      transition={{ ease: "easeInOut", duration: 0.7 }}
-                      className="text-white"
-                    >
-                      {char}
-                    </motion.span>
+                    <span key={charIndex} className="relative">
+                      <motion.span
+                        style={{ opacity, color }}
+                        transition={{ ease: "easeInOut", duration: 0.7 }}
+                        className="text-white"
+                      >
+                        {char}
+                      </motion.span>
+                    </span>
                   );
                 })}
               </span>
@@ -127,3 +128,4 @@ export default function Paragraph() {
     </div>
   );
 }
+
