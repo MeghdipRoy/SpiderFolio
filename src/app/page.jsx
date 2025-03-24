@@ -7,7 +7,7 @@
 
 import Paragraph from "../components/Paragraph";
  import StaticScroll from '../components/StaticScroll';
-import ContinuousAnim from '../components/ContinuousAnim';
+
 import Layout from "@/components/Layout";
 import Image from "next/image";
 import AnimatedText from "@/components/AnimatedText";
@@ -24,7 +24,7 @@ export default function Home() {
       {/* Absolute positioned icons in the top-right corner */}
       <div className="absolute top-4 right-4 flex space-x-8 z-50">
         <a href="https://github.com/MeghdipRoy" target="_blank" rel="noopener noreferrer">
-          <FaGithub className="text-3xl text-white hover:text-blue-400 transition-colors" />
+          <FaGithub className="text-3xl text-white hover:text-black transition-colors" />
         </a>
         <a href="https://www.linkedin.com/in/meghdip-roy-046764249/" target="_blank" rel="noopener noreferrer">
           <FaLinkedin className="text-3xl text-white hover:text-blue-400 transition-colors" />
