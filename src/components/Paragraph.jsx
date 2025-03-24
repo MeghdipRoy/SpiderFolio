@@ -59,7 +59,7 @@ export default function Paragraph() {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ["start center", "end center"], // Adjust scrolling effect
+    offset: ["start center", "end center"], 
   });
 
   const paragraph = [
@@ -68,29 +68,24 @@ export default function Paragraph() {
     "I can never forget that."
   ];
 
-  // 🔹 Compute transforms outside `.map()`
-  const transformData = paragraph.map((line, lineIndex) =>
-    line.split(" ").map((word, wordIndex) =>
-      word.split("").map((char, charIndex) => {
-        const charStart =
-          (lineIndex +
-            wordIndex / line.length +
-            charIndex / (line.length * word.length)) /
-          paragraph.length;
+  // ✅ Function to get transform values
+  function getTransformData(lineIndex, wordIndex, charIndex, word, line) {
+    const charStart =
+      (lineIndex +
+        wordIndex / line.length +
+        charIndex / (line.length * word.length)) /
+      paragraph.length;
+    const charEnd = charStart + 0.15;
 
-        const charEnd = charStart + 0.15;
+    const opacity = useTransform(scrollYProgress, [charStart, charEnd], [0, 1]);
+    const color = useTransform(
+      scrollYProgress,
+      [charStart, charEnd],
+      ["rgba(255,255,255,0.2)", "rgb(185,28,28)"]
+    );
 
-        return {
-          opacity: useTransform(scrollYProgress, [charStart, charEnd], [0, 1]),
-          color: useTransform(
-            scrollYProgress,
-            [charStart, charEnd],
-            ["rgba(255,255,255,0.2)", "rgb(185,28,28)"]
-          )
-        };
-      })
-    )
-  );
+    return { opacity, color };
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-red-600/50 via-blue-600/50 to-blue-600/50">
@@ -103,7 +98,13 @@ export default function Paragraph() {
             {line.split(" ").map((word, wordIndex) => (
               <span key={wordIndex} className="relative mr-3">
                 {word.split("").map((char, charIndex) => {
-                  const { opacity, color } = transformData[lineIndex][wordIndex][charIndex];
+                  const { opacity, color } = getTransformData(
+                    lineIndex,
+                    wordIndex,
+                    charIndex,
+                    word,
+                    line
+                  );
 
                   return (
                     <span key={charIndex} className="relative">
